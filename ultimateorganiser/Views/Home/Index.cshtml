@@ -1,0 +1,20 @@
+﻿
+    @model IEnumerable<ultimateorganiser.Models.ClubEvent>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<h1>@ViewBag.PageTitle</h1>
+
+ @Html.Partial("~/Views/Home/EventsPartialView.cshtml", Model.ToList())  
+
+
+@section scripts
+{
+    <script>
+        $(function() {      // ready event
+            toastr.info('Toaster popup');
+        });
+    </script>
+}

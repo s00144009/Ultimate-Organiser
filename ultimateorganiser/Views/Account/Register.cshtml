@@ -1,0 +1,153 @@
+﻿@model ultimateorganiser.Models.ClubMember
+@{
+    ViewBag.Title = "Register";
+}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+@*<script>
+        $('#Password').keyup(function (e) {
+            var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+            var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+            var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+            //Not enough characters
+            if (false == enoughRegex.test($(this).val())) {
+                $('#passstrength').html('More Characters');
+                $('#passstrength').css('color', 'red')
+
+            //Strong Password
+            } else if (strongRegex.test($(this).val())) {
+                $('#passstrength').className = 'ok';
+                $('#passstrength').html('Strong!');
+                $('#passstrength').css('color', 'lightgreen')
+            //Medium Password
+            } else if (mediumRegex.test($(this).val())) {
+                $('#passstrength').className = 'alert';
+                $('#passstrength').html('Medium!');
+                $('#passstrength').css('color', 'yellow');
+            //Weak Password
+            } else {
+                $('#passstrength').className = 'error';
+                $('#passstrength').html('Weak!');
+                $('#passstrength').css('color', 'red')
+            }
+            return true;
+        });
+    </script>*@
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Create a new account.</h4>
+    <hr />
+    @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
+
+    //First Name
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserFName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserFName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserFName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //Last Name
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserLName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserLName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserLName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //User Name
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //UserDob
+    <div class="form-group">
+        @Html.LabelFor(model => model.UserDoB, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.UserDoB, new { id = "userdob" })
+            @Html.ValidationMessageFor(model => model.UserDoB, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //Email
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserEmail, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserEmail, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserEmail, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //Password
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.UserPassword, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserPassword, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //Confirm Password
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    //Test Date
+    <p>Date: <input type="text" id="datepicker"></p>
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-success" value="Sign Up!" />
+        </div>
+    </div>
+}
+
+@*<style>
+    #pass_form {
+        margin: 10px;
+    }
+
+    label {
+        font-family: verdana;
+        font-size: 10px;
+    }
+
+    input {
+        padding: 2px;
+        color: gray;
+    }
+
+    #passstrength {
+        font-family: verdana;
+        font-size: 10px;
+        font-weight: bold;
+    }
+</style>*@
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+    $(document).ready(function () {
+        $("#news_date").datepicker({ dateFormat: 'dd/mm/yy' });
+    });
+    </script>
+}
