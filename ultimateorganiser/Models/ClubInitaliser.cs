@@ -8,9 +8,9 @@ namespace ultimateorganiser.Models
 {
     public class ClubInitaliser: DropCreateDatabaseAlways<UltimateDb>
     {
-        //// Called on database setup
-        //protected override void Seed(UltimateDb context)
-        //{
+        // Called on database setup
+        protected override void Seed(UltimateDb context)
+        {
         //    var initEvents = new List<ClubEvent>
         //    {
         //        new ClubEvent() { EventTitle="Training", EventDate = DateTime.Parse("09/05/16"), EventDesc = "Training on pitch at 8pm" },
@@ -44,7 +44,7 @@ namespace ultimateorganiser.Models
         //    initEvents.ForEach(e => context.ClubEvents.Add(e));
         //    initClubs.ForEach(c => context.Clubs.Add(c));   // Add each Club to the dataabse
         //    context.SaveChanges();  // save changes to the database
-        //}
+        }
 
     }
 }
