@@ -1,0 +1,101 @@
+﻿@model IEnumerable<ultimateorganiser.Models.Club>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ClubName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClubDescription)
+        </th>
+        <th>
+            Number of Members
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClubName)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.ClubDescription)
+            </td>
+            <td>
+                @if (item.ClubMembers.Count == 0)
+                {
+                    @:<span class="badge alert-danger">@item.ClubMembers.Count</span>
+                }
+                else
+                {
+                    @:<span class="badge alert-success">@item.ClubMembers.Count</span>
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ClubID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ClubID }) |
+                @*  @Html.ActionLink("Add Member", "AddMember", new object { id=item.ClubID }) Add Member to Club Action Link*@
+                @Html.ActionLink("Delete", "Delete", new { id = item.ClubID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+
+
+
+
+
+@*<h2>Index</h2>
+
+<div>
+    <h4>Club</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ClubName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ClubName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ClubDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ClubDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ClubImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ClubImage)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ClubID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

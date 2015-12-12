@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "DeleteImages";
+}
+
+<h2>DeleteImages</h2>
+
+@using (Html.BeginForm("DeleteImages", "Slider", FormMethod.Post))
+{
+    <table style="background-color:azure" border="1">
+        <thead style="background-color:gray">
+            <tr>
+                <th>Select</th>
+                <th>Images</th>
+            </tr>
+        </thead>
+        <tbody>
+            @Html.EditorForModel()
+        </tbody>
+    </table>
+    <input type="submit" value="Delete Selected Images" />
+}
+
+<p>@Html.ActionLink("Slider Home", "Index", "Slider")</p>
