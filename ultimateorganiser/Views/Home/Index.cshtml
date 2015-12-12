@@ -1,0 +1,33 @@
+﻿
+@model IEnumerable<ultimateorganiser.Models.ClubEvent>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+
+<h1>@ViewBag.PageTitle</h1>
+
+@Html.Partial("~/Views/Home/EventsPartialView.cshtml", Model.ToList())
+
+@*Create Event Button*@
+@Html.ActionLink("Create Event", "AddEvent", new { @class = "btn btn-info btn sm" })
+
+<p>
+    <input type="text" id="MyDate" />
+</p>
+
+
+@section scripts
+{
+    <script type="text/javascript">
+        //$(function () {      // ready event
+        //    toastr.info('Toaster popup');
+        //});
+
+        $(document).ready(function () {
+            $("#MyDate").datepicker();
+        });
+    </script>
+}
