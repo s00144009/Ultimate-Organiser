@@ -1,0 +1,108 @@
+﻿@model ultimateorganiser.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script>
+    $('#Password').keyup(function (e) {
+        var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+        var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+        var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+        //Not enough characters
+        if (false == enoughRegex.test($(this).val())) {
+            $('#passstrength').html('More Characters');
+            $('#passstrength').css('color', 'red')
+
+        //Strong Password
+        } else if (strongRegex.test($(this).val())) {
+            $('#passstrength').className = 'ok';
+            $('#passstrength').html('Strong!');
+            $('#passstrength').css('color', 'lightgreen')
+        //Medium Password
+        } else if (mediumRegex.test($(this).val())) {
+            $('#passstrength').className = 'alert';
+            $('#passstrength').html('Medium!');
+            $('#passstrength').css('color', 'yellow');
+        //Weak Password
+        } else {
+            $('#passstrength').className = 'error';
+            $('#passstrength').html('Weak!');
+            $('#passstrength').css('color', 'red')
+        }
+        return true;
+    });
+</script>
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Create a new account.</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" }) 
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Register" />
+        </div>
+    </div>
+@*}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}*@
+
+<style>
+    #pass_form {
+        margin: 10px;
+    }
+
+    label {
+        font-family: verdana;
+        font-size: 10px;
+    }
+
+    input {
+        padding: 2px;
+        color: gray;
+    }
+
+    #passstrength {
+        font-family: verdana;
+        font-size: 10px;
+        font-weight: bold;
+    }
+</style>
+
+
+
+
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,72 @@
+﻿@model ultimateorganiser.ViewModels.EventViewModel
+
+@{
+    ViewBag.Title = "CreateEvent";
+}
+
+<h2>CreateEvent</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>ClubEvent</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @*Event Title*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.EventTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EventTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EventTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*Event Date*@
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.EventDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        @*Event Description*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.EventDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EventDescription, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EventDescription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*Event Type*@
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.eventType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.eventType, htmlAttributes: new { @class = "form-control", @id = "dropdown" })
+                @Html.ValidationMessageFor(model => model.eventType, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        @*Add People*@
+        <div class="form-group">
+        @Html.LabelFor(model => model.Members, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+        @Html.DropDownListFor(s => s.MemberId, Model.Members, "Select Member")
+        </div>
+    </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
