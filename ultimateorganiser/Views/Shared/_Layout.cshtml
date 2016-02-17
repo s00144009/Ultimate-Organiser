@@ -4,13 +4,109 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Scripts.Render("~/bundles/jquery")
+
     @Scripts.Render("~/bundles/bootstrap")
     @Styles.Render("~/Content/css")
+
+    @*JQuery UI Styles*@
+    <link href="~/Content/themes/base/all.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/theme.css" rel="stylesheet" />
+
+    @Scripts.Render("~/bundles/jquery")
+
+
+    <script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/slider")
+    @Scripts.Render("~/bundles/jqueryFirstVisitPopup")
+    @Scripts.Render("~/bundles/ajax")
 
-    <link href="~/Content/jquery.bxslider.css" rel=" stylesheet" />   
+    <script>
+
+        //Create Club jQuery UI Dialog popup with effects
+        $(function () {
+            $("#CreateClub-dialog").dialog({
+                autoOpen: false,
+                height: 500,
+                width: 600,
+                show: {
+                    effect: "highlight",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "clip",
+                    duration: 500
+                }
+            });
+
+            //Open Create Event Dialog Window
+            $("#createClub-opener").click(function () { 
+                $("#CreateClub-dialog").dialog("open");
+            });
+        });
+
+        //onSuccess - Popup Ajax
+        function onSuccess() {
+            $('#dialog-modal').dialog("close");
+        }
+
+
+        //Details Page
+        //Members Table JQuery
+        (function () {
+            'use strict';
+            var $ = jQuery;
+            $.fn.extend({
+                filterTable: function () {
+                    return this.each(function () {
+                        $(this).on('keyup', function (e) {
+                            $('.filterTable_no_results').remove();
+                            var $this = $(this),
+                                search = $this.val().toLowerCase(),
+                                target = $this.attr('data-filters'),
+                                $target = $(target),
+                                $rows = $target.find('tbody tr');
+
+                            if (search == '') {
+                                $rows.show();
+                            } else {
+                                $rows.each(function () {
+                                    var $this = $(this);
+                                    $this.text().toLowerCase().indexOf(search) === -1 ? $this.hide() : $this.show();
+                                })
+                                if ($target.find('tbody tr:visible').size() === 0) {
+                                    var col_count = $target.find('tr').first().find('td').size();
+                                    var no_results = $('<tr class="filterTable_no_results"><td colspan="' + col_count + '">No results found</td></tr>')
+                                    $target.find('tbody').append(no_results);
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+            $('[data-action="filter"]').filterTable();
+        })(jQuery);
+
+        $(function () {
+            // attach table filter plugin to inputs
+            $('[data-action="filter"]').filterTable();
+
+            $('.container').on('click', '.panel-heading span.filter', function (e) {
+                var $this = $(this),
+                    $panel = $this.parents('.panel');
+
+                $panel.find('.panel-body').slideDown("slow");
+                if ($this.css('display') != 'none') {
+                    $panel.find('.panel-body input').focus();
+                }
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+
+    </script>
+
+
+    <link href="~/Content/jquery.bxslider.css" rel=" stylesheet" />
 
 </head>
 <body>
@@ -29,6 +125,8 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Event", "Event", "Home")</li>
+                    @*<a href="~/Views/Home/Event.cshtml">~/Views/Home/Event.cshtml</a*@>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -42,7 +140,7 @@
         </footer>
     </div>
 
-    
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

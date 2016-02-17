@@ -1,0 +1,45 @@
+﻿@model IEnumerable<ultimateorganiser.Models.Club>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ClubName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClubDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClubImage)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClubName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClubDescription)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClubImage)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ClubID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ClubID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ClubID })
+        </td>
+    </tr>
+}
+
+</table>

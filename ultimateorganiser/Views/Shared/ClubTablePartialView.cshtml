@@ -1,0 +1,67 @@
+﻿@model IEnumerable<ultimateorganiser.Models.Club>
+
+<h3>List of clubs registered</h3>
+<div class="row">
+    <div class="col-xs-10">
+        <table class="table table-condensed table-striped">
+
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClubName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClubDescription)
+                </th>
+                <th>
+                    Number of Members
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClubName)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClubDescription)
+                    </td>
+                    <td>
+                        @if (item.ClubMembers.Count == 0)
+                        {
+                            @:<span class="badge alert-danger">@item.ClubMembers.Count</span>
+                            }
+                        else
+                        {
+                            @:<span class="badge alert-success">@item.ClubMembers.Count</span>
+                            }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ClubID }, new { @class = "btn btn-warning btn-xs" }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.ClubID }, new { @class = "btn btn-info btn-xs" }) |
+                        @Html.ActionLink("Add Members", "AddMembers", new { id = item.ClubID }, new { @class = "btn btn-warning btn-xs" })
+
+                        @*Create Club button*@
+                        <button id="createClub-opener" class="btn-success btn-xs"> Create Club Test</button>
+
+                        @*Delete button Dialog box button*@
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ClubID },
+                            new
+                            {
+
+                                data_confirmprompt = "Are you sure you want to delete "
+                            + item.ClubName + "? This action cannot be undone"
+                            })                        
+
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+
+
+

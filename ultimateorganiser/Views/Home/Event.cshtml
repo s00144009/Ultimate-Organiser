@@ -1,0 +1,60 @@
+﻿@model ultimateorganiser.Models.ClubEvent
+
+@{
+    ViewBag.Title = "Event";
+}
+
+
+<fieldset>
+    <legend>Events by Club</legend>
+    <div>
+        @Html.DropDownList("Clubs", "select a club")
+    </div>
+    <br />
+    <div id="target">
+
+    </div>
+    <div id="log">
+
+    </div>
+</fieldset>
+
+<div>
+    @{
+       @Html.Action("EventPartialView", new { id = Model.ClubID })
+    }
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Clubs").change(function () {
+            });
+        });
+
+        $(document).ready(function () {
+            $("#Clubs").change(function () {
+                var clubSelected = $("select option:selected").first().text();
+                $.get('@Url.Action("EventPartialView")',
+                    { id: clubSelected }, function (data) {
+                        $("#target").html(data);
+                    });
+            });
+        });
+
+        $(document).ready(function () {
+            $("#Clubs").change(function () {
+                $("#log").ajaxError(function (event, jqxhr, settings, exception) {
+                    alert(exception);
+                });
+
+                var clubSelected = $("select option:selected").first().text();
+                $.get('@Url.Action("EventPartialView")',
+                    { id: clubSelected }, function (data) {
+                        $("#target").html(data);
+                    });
+            });
+        });
+    </script>
+}

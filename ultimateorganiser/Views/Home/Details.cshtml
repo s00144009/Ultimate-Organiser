@@ -1,117 +1,163 @@
 ﻿@model ultimateorganiser.Models.Club
 
-
+@{int MemberRowNo = 0;}
+@{int EventRowNo = 0;}
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+@if (Model != null)
+{
+    <div class="container">
 
-<div>
-    <h4>Club</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.ClubName)
-        </dt>
+        <div>
+            <h2>@Model.ClubName</h2>
+            <p style="opacity:0.7">@Model.ClubDescription</p>
+        </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.ClubName)
-        </dd>
+        <p>Edit Club Details</p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ClubID }, new { @class = "btn btn-warning btn-xs" }) 
 
+        <br />
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ClubDescription)
-        </dt>
+        <p>Create Event for this club</p>
+        @Html.ActionLink("Create new event", "CreateEvent", new { id = Model.ClubID }, new { @class = "btn btn-warning btn-xs" })
 
-        <dd>
-            @Html.DisplayFor(model => model.ClubDescription)
-        </dd>
+        
 
-        @*<dt>
-                @Html.DisplayNameFor(model => model.ClubImage)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.ClubImage)
-            </dd>*@
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ClubMembers)
-        </dt>
-
-        <dd>
-            <div class="row">
-                @foreach (var member in Model.ClubMembers)
-            {
-                    <div class="col-md-2 col-sm-6 col-xs-6">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-
-                                <h4>@member.UserFName.Substring(0, Math.Min(member.UserFName.Length, 20))</h4>
-                                <h4>@member.UserLName.Substring(0, Math.Min(member.UserLName.Length, 20))</h4>
-                                <p>@member.UserDescription.Substring(0, Math.Min(member.UserDescription.Length, 25))...</p>
-                            </div>
-                            <div class="panel-footer">@member.UserName</div>
+        @*Members Table*@
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Members</h3>
+                        <div class="pull-right">
+                            <span class="clickable filter" data-toggle="tooltip" title="Filter members" data-container="body">
+                                <i class="glyphicon glyphicon-filter"></i>
+                            </span>
                         </div>
                     </div>
-                }
+                    <div class="panel-body">
+                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Memberss" />
+                    </div>
+                    <table class="table table-hover" id="dev-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in Model.ClubMembers)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@(MemberRowNo += 1)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.UserFName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.UserLName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.UserEmail)</td>
+                                </tr>
+                            </tbody>
+                        }
+                    </table>
+                </div>
             </div>
-        </dd>
+        </div>
 
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ClubID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+        @*Events Table*@
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Events</h3>
+                        <div class="pull-right">
+                            <span class="clickable filter" data-toggle="tooltip" title="Filter events" data-container="body">
+                                <i class="glyphicon glyphicon-filter"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Events" />
+                    </div>
+                    <table class="table table-hover" id="dev-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
 
 
 
+                        @foreach (var item in Model.ClubEvents)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@(EventRowNo += 1)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EventTitle)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.eventType)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EventDate)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EventDesc)</td>
+                                </tr>
+                            </tbody>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
 
 
 
-@*@{
-    ViewBag.Title = "Details";
+        <div>
+            @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-sm btn-primary" })
+        </div>
+    </div>
+
 }
 
-<h2>Details</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ClubName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ClubDescription)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ClubImage)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClubName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClubDescription)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClubImage)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ClubID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ClubID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ClubID })
-        </td>
-    </tr>
+else
+{
+    <div class="alert alert-warning">
+        <h4>This club does not exist</h4>
+        <a href="" class="btn btn-info"></a>
+        @Html.ActionLink("Back To List", "Index", null, new { @class = "btn btn-sm btn-warning" })
+    </div>
 }
 
-</table>*@
+@*@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('.panel').hover(
+                function () {
+                    $(this).find('.panel-footer').slideDown(250),
+                        $(this).find('.panel-footer').css("background", "#0099ff");
+                },
+
+                function () {
+                    $(this).find('.panel-footer').slideUp(250);
+
+                });
+        })
+    </script>*@
+
+
+@*<div class="row">
+            <div class="panel-body">
+                <h3>
+                    @Html.DisplayFor(model => model.ClubName)<small>&nbsp;&nbsp;@Html.DisplayFor(model => model.ClubDescription)</small><span>
+
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.ClubID }, new { @class = "btn btn-sm btn-warning " })
+                        @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-sm btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = Model.ClubID }, new { @class = "btn btn-sm btn-danger" })
+
+                    </span>
+                </h3>
+            </div>
+    </div>*@

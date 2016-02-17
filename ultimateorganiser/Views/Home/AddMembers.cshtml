@@ -1,0 +1,72 @@
+﻿@model ultimateorganiser.ViewModels.AddMembersToClub
+@using (Html.BeginForm())
+{
+    <h2>Add new members to @Model.ClubName</h2>
+
+    @Html.HiddenFor(s => s.ClubId)
+    @Html.ListBoxFor(s => s.SelectedMembers, Model.Members)
+
+    @*@Html.ListBoxFor(m => m.SelectedMembers, new MultiSelectList(Model, "ID Property", "Display Property"), new { Multiple = "multiple" })*@
+
+    <input type="submit" />
+}
+
+
+@*@model ultimateorganiser.Models.NewMemberList
+
+
+
+    @{
+        ViewBag.Title = "Add Members";
+    }
+
+
+    @using (Html.BeginForm(@Model.SelectedIDs))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ListBoxFor(m => m.SelectedIDs, new MultiSelectList(Model.NewMembers, "UserId", "UserFName", Model.SelectedIDs))
+
+
+        <input type="submit" value="save" />
+    }*@
+
+
+@* *This is a listbox that displays all members on the dataabse* *@
+@*@Html.ListBoxFor(m => m.ClubMembers, new SelectList(ViewBag.lstMembers, "UserId", "UserFName"))*@
+
+
+@*
+    <div>
+
+        @{int MemberRowNo = 0;}
+
+    <h2>Current Members</h2>
+
+    <table class="table table-hover" id="dev-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Username</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.ClubMembers)
+        {
+            <tbody>
+                <tr>
+                    <td>@(MemberRowNo += 1)</td>
+                    <td>@Html.DisplayFor(modelItem => item.UserFName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.UserLName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.UserEmail)</td>
+                </tr>
+            </tbody>
+        }
+    </table>
+
+        @Html.ActionLink("Back To List", "Index", null, new { @class = "btn btn-sm btn-warning" })
+
+    </div>*@
+

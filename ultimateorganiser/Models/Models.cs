@@ -6,6 +6,8 @@ using System.Data.Common;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Data.Entity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Web.Mvc;
 
 namespace ultimateorganiser.Models
 {
@@ -57,26 +59,33 @@ namespace ultimateorganiser.Models
 
         //Event Title
         [Required(ErrorMessage = "You must enter a Title for this event")]
-        [Display(Name = "Event Title")]
+        [Display(Name = "Title")]
         public string EventTitle { get; set; }
 
         //Event Date
-        [Required(ErrorMessage = "You must put a date on this event")]
+       // [Required(ErrorMessage = "You must put a date on this event")]
         [DataType(DataType.DateTime)]
+        [Display(Name = "Date")]
         public DateTime EventDate { get; set; }
 
         //Event Description
-        [Display(Name = "Event Description")]
+        [Display(Name = "Description")]
         [DataType(DataType.Text)]
         public string EventDesc { get; set; }
 
-        //Genre
+        //Event Type
         [Required]
         [Display(Name = "Event Type")]
         public EventType eventType { get; set; }
 
         //Event Members
         public virtual List<ClubMember> EventMembers { get; set; }
+
+        //Foreign Key for Club
+        public int ClubID { get; set; }
+
+        [ForeignKey("ClubID")]
+        public virtual Club Club { get; set; }
     }
 
     public class ClubMember
@@ -128,5 +137,20 @@ namespace ultimateorganiser.Models
         //[Required]
         [StringLength(20, MinimumLength = 6)]
         public string UserPassword { get; set; }
+
+        //Foreign Key for Club
+        public int ClubID { get; set; }
+
+        //[ForeignKey("ClubID")]
+        //public virtual Club Club { get; set; }
     }//end User Class
+
+
+    public class NewMemberList //Class used when adding new members to the members list of a club
+    {
+        public List<ClubMember> NewMembers { get; set; }
+        public List<int> SelectedIDs { get; set; }
+    }
+
+  
 }//end Namespace

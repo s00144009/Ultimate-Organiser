@@ -11,6 +11,7 @@ namespace ultimateorganiser.ViewModels
     {
         public int NumberofClubs { get; set; }
         public List<Club> Clubs { get; set; }
+        public List<ClubMember> ClubMembers { get; set; }
         public int MemberCount { get; set; }
     }
 }

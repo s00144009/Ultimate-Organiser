@@ -1,21 +1,14 @@
-﻿@model ultimateorganiser.ViewModels.EventViewModel
+﻿@model ultimateorganiser.Models.ClubEvent
 
-@{
-    ViewBag.Title = "CreateEvent";
-}
-
-<h2>CreateEvent</h2>
+<h2>Create new event for @ViewBag.ClubName</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>ClubEvent</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        @*Event Title*@
         <div class="form-group">
             @Html.LabelFor(model => model.EventTitle, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -24,49 +17,56 @@
             </div>
         </div>
 
-        @*Event Date*@
-        @*<div class="form-group">
+        <div class="form-group">
             @Html.LabelFor(model => model.EventDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
             </div>
-        </div>*@
+        </div>
 
-        @*Event Description*@
         <div class="form-group">
-            @Html.LabelFor(model => model.EventDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.EventDesc, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.EventDescription, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EventDescription, "", new { @class = "text-danger" })
+                @Html.TextAreaFor(model => model.EventDesc, new { @class = "form-control", @cols = 80, @rows = 10 })
+                @Html.ValidationMessageFor(model => model.EventDesc, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        @*Event Type*@
-        @*<div class="form-group">
+        <div class="form-group">
             @Html.LabelFor(model => model.eventType, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.eventType, htmlAttributes: new { @class = "form-control", @id = "dropdown" })
+                @Html.EnumDropDownListFor(model => model.eventType, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.eventType, "", new { @class = "text-danger" })
             </div>
-        </div>*@
-
-        @*Add People*@
-        <div class="form-group">
-        @Html.LabelFor(model => model.Members, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-        @Html.DropDownListFor(s => s.MemberId, Model.Members, "Select Member")
         </div>
-    </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.ClubID, "ClubID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ClubID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ClubID, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        @*Club ID*@
+        @Html.HiddenFor(model => model.ClubID, new { ClubID= ViewBag.ClubID })
+
+
+        @*Event ID Test*@
+       @* @Html.HiddenFor(model => model.EventID, new { id = 99  })*@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create Event" class="btn btn-info" />
+                @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-danger btn-sm" })
+                @*@Html.ActionLink("Cancel", "Details", new { id = ViewBag.ClubID }, new { @class = "btn btn-danger btn-sm" })*@
+
             </div>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@*<div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>*@
