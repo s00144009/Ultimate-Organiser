@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Geocoding.Address>
+<div>
+
+
+
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+
+
+   
+    @*<button onclick="onCoordintateClick(@address.Coordinates.Latitude, @address.Coordinates.Longitude)" class="btn btn-primary" style="width:100%">
+        @address.FormattedAddress
+    </button>*@
+
+    <div id="map" style="width:500px; height:500px" class="col-md-4" style="overflow-x:hidden">
+    </div>
+
+    <script>
+            document.onload = function GoogleMap(lat, long)
+        {
+            var center = new google.maps.LatLng(lat, lon);
+
+            var mapOptions = {
+                zoom: 19,
+                center: center,
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            new google.maps.Marker({
+                position: center,
+                title: 'Location',
+                map: map
+            });
+        }
+    </script>
+</div>
+

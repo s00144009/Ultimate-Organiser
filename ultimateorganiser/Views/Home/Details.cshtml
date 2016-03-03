@@ -1,7 +1,12 @@
 ﻿@model ultimateorganiser.Models.Club
 
+@using Geocoding;
+@using Geocoding.Google;
+
+
 @{int MemberRowNo = 0;}
 @{int EventRowNo = 0;}
+
 
 @{
     ViewBag.Title = "Details";
@@ -12,106 +17,200 @@
     <div class="container">
 
         <div>
+
             <h2>@Model.ClubName</h2>
             <p style="opacity:0.7">@Model.ClubDescription</p>
         </div>
 
         <p>Edit Club Details</p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.ClubID }, new { @class = "btn btn-warning btn-xs" }) 
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ClubID }, new { @class = "btn btn-warning btn-xs" })
 
         <br />
 
         <p>Create Event for this club</p>
         @Html.ActionLink("Create new event", "CreateEvent", new { id = Model.ClubID }, new { @class = "btn btn-warning btn-xs" })
 
-        
 
-        @*Members Table*@
-        <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Members</h3>
-                        <div class="pull-right">
-                            <span class="clickable filter" data-toggle="tooltip" title="Filter members" data-container="body">
-                                <i class="glyphicon glyphicon-filter"></i>
-                            </span>
+        @*Events*@
+        @if (Model.ClubMembers.Count == 0)
+        {
+            <h2>There is currentely no members for this club</h2>
+
+            <p>Would you like to add a new member</p>
+
+        }
+
+        else
+        {
+            @*Members Table*@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Members</h3>
+                            <div class="pull-right">
+                                <span class="clickable filter" data-toggle="tooltip" title="Filter members" data-container="body">
+                                    <i class="glyphicon glyphicon-filter"></i>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-body">
-                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Memberss" />
-                    </div>
-                    <table class="table table-hover" id="dev-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        @foreach (var item in Model.ClubMembers)
-                        {
-                            <tbody>
+                        <div class="panel-body">
+                            <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Memberss" />
+                        </div>
+                        <table class="table table-hover" id="dev-table">
+                            <thead>
                                 <tr>
-                                    <td>@(MemberRowNo += 1)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.UserFName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.UserLName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.UserName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.UserEmail)</td>
+                                    <th>#</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
                                 </tr>
-                            </tbody>
-                        }
-                    </table>
+                            </thead>
+                            @foreach (var item in Model.ClubMembers)
+                            {
+                                <tbody>
+                                    <tr>
+                                        <td>@(MemberRowNo += 1)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.UserFName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.UserLName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.UserEmail)</td>
+                                    </tr>
+                                </tbody>
+                            }
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
 
-        @*Events Table*@
-        <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Events</h3>
-                        <div class="pull-right">
-                            <span class="clickable filter" data-toggle="tooltip" title="Filter events" data-container="body">
-                                <i class="glyphicon glyphicon-filter"></i>
-                            </span>
+        @*Events*@
+        @if (Model.ClubEvents.Count == 0)
+        {
+            <h2>There is currentely no events for this club</h2>
+
+            <p>Would you like to add a new event</p>
+            <p>
+                @Html.ActionLink("Create new event", "CreateEvent", new { id = Model.ClubID }, new { @class = "btn btn-warning btn-sm" })
+            </p>
+        }
+
+        else
+        {
+            @*Events Table*@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Events</h3>
+                            <div class="pull-right">
+                                <span class="clickable filter" data-toggle="tooltip" title="Filter events" data-container="body">
+                                    <i class="glyphicon glyphicon-filter"></i>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="panel-body">
-                        <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Events" />
-                    </div>
-                    <table class="table table-hover" id="dev-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Date</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-
-
-
-                        @foreach (var item in Model.ClubEvents)
-                        {
-                            <tbody>
+                        <div class="panel-body">
+                            <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Events" />
+                        </div>
+                        <table class="table table-hover" id="dev-table">
+                            <thead>
                                 <tr>
-                                    <td>@(EventRowNo += 1)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.EventTitle)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.eventType)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.EventDate)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.EventDesc)</td>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Event Type</th>
+                                    <th>Date</th>
+                                    <th>Location</th>
+                                    <th>Description</th>
                                 </tr>
-                            </tbody>
-                        }
-                    </table>
+                            </thead>
+
+
+                            @foreach (var item in Model.ClubEvents)
+                            {
+                                <tbody>
+                                    <tr>
+                                        <td>@(EventRowNo += 1)</td>
+
+                                        @*Low Priority*@
+                                        @if (item.eventPriority == ultimateorganiser.Models.EventPriority.Low)
+                                        {
+                                            <td style="color:#00ff00  ">@Html.DisplayFor(modelItem => item.EventTitle)</td>
+                                        }
+
+                                        @*Medium Priority*@
+                                        @if (item.eventPriority == ultimateorganiser.Models.EventPriority.Medium)
+                                        {
+                                            <td style="color:#FFC200  ">@Html.DisplayFor(modelItem => item.EventTitle)</td>
+                                        }
+
+                                        @*High Priority*@
+                                        @if (item.eventPriority == ultimateorganiser.Models.EventPriority.High)
+                                        {
+                                            <td style="color:#ff0000  ">@Html.DisplayFor(modelItem => item.EventTitle)</td>
+                                        }
+
+                                        @*No Priority Set*@
+                                        @if (item.eventPriority == ultimateorganiser.Models.EventPriority.None)
+                                        {
+                                            <td>@Html.DisplayFor(modelItem => item.EventTitle)</td>
+                                        }
+                                        <td>@Html.DisplayFor(modelItem => item.eventType)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.EventDate)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.EventLocation)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.EventDesc)</td>
+
+                                        <td>@Html.ActionLink("Edit", "EditEvent", new { id = item.EventID }, new { @class = "btn btn-warning btn-sm" })</td>
+                                        <td>
+                                            @*Delete button Dialog box button*@
+                                            @Html.ActionLink("Delete", "DeleteEvent", new { id = item.EventID },
+                                                new
+                                                {
+                                                    @class = "btn btn-danger btn-sm",
+                                                    data_confirmprompt = "Are you sure you want to delete "
+                                                      + item.EventTitle + "? This action cannot be undone"
+                                                })
+
+                                        </td>
+                                        <td>
+                                            @*Google Maps*@
+                                            @Html.ActionLink("More Details", "EventDetails", new { id = item.EventID }, new { @class = "btn btn-warning btn-sm" })
+                                           
+</td>
+                                    </tr>
+                                </tbody>
+                            }
+                        </table>
+                    </div>
                 </div>
             </div>
+        }
+
+<div>
+        <div id="map" style="width:500px; height:500px" class="col-md-4">
         </div>
+
+        <script>
+            document.onload = function GoogleMap(lat, long)
+        {
+            var center = new google.maps.LatLng(lat, lon);
+
+            var mapOptions = {
+                zoom: 19,
+                center: center,
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            new google.maps.Marker({
+                position: center,
+                title: 'Location',
+                map: map
+            });
+        }
+        </script>
+    </div>
 
 
 
@@ -125,10 +224,43 @@
 else
 {
     <div class="alert alert-warning">
-        <h4>This club does not exist</h4>
-        <a href="" class="btn btn-info"></a>
-        @Html.ActionLink("Back To List", "Index", null, new { @class = "btn btn-sm btn-warning" })
+        <h4>Looks like something went wrong</h4>
+        @Html.ActionLink("Go Back", "Index", null, new { @class = "btn btn-sm btn-warning" })
     </div>
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+        function onCoordintateClick(lat, lon)
+        {
+            var center = new google.maps.LatLng(lat, lon);
+
+            var mapOptions = {
+                zoom: 19,
+                center: center,
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            new google.maps.Marker({
+                position: center,
+                title: 'Location',
+                map: map
+            });
+        }
+
+
+
+        //Delete Message
+        $('*[data-confirmprompt]').click(function (event) {
+            var promptText = $(this).attr('data-confirmprompt');
+            if (!confirm(promptText)) {
+                event.preventDefault();
+            }
+        });
+    </script>
 }
 
 @*@section scripts{

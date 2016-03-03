@@ -1,72 +1,130 @@
 ﻿@model ultimateorganiser.Models.ClubEvent
+@{
+    ViewBag.Title = "new Event for " + ViewBag.SelClubName;
+}
 
-<h2>Create new event for @ViewBag.ClubName</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
     <div class="form-horizontal">
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.EventTitle, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EventTitle, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EventTitle, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <fieldset>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EventDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EventDesc, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextAreaFor(model => model.EventDesc, new { @class = "form-control", @cols = 80, @rows = 10 })
-                @Html.ValidationMessageFor(model => model.EventDesc, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.eventType, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.eventType, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.eventType, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.ClubID, "ClubID", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.EventTitle, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownList("ClubID", null, htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.ClubID, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.EventTitle, new { htmlAttributes = new { @class = "form-control" ,@placeholder = "Add a brief, clear title" } })
+
+                    @Html.ValidationMessageFor(model => model.EventTitle, "", new { @class = "text-danger" })
                 </div>
-            </div>*@
-
-        @*Club ID*@
-        @Html.HiddenFor(model => model.ClubID, new { ClubID= ViewBag.ClubID })
-
-
-        @*Event ID Test*@
-       @* @Html.HiddenFor(model => model.EventID, new { id = 99  })*@
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create Event" class="btn btn-info" />
-                @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-danger btn-sm" })
-                @*@Html.ActionLink("Cancel", "Details", new { id = ViewBag.ClubID }, new { @class = "btn btn-danger btn-sm" })*@
-
             </div>
-        </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EventDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EventLocation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EventLocation, new { htmlAttributes = new { @class = "form-control", @placeholder = "Where is this event going to take place" } })
+                    @Html.ValidationMessageFor(model => model.EventLocation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EventDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.EventDesc, new { @class = "form-control", @cols = 80, @rows = 10, @placeholder = "Enter more information about this event" })
+                    @Html.ValidationMessageFor(model => model.EventDesc, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.eventType, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EnumDropDownListFor(model => model.eventType, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.eventType, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.eventPriority, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EnumDropDownListFor(model => model.eventPriority, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.eventPriority, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            @Html.HiddenFor(e => e.ClubID)
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create Event" class="btn btn-info" />
+                    @Html.ActionLink("Cancel", null, null, null, new { href = Request.UrlReferrer, @class = "btn btn-danger btn-sm" })
+
+                </div>
+            </div>
+        </fieldset>
     </div>
 }
 
-@*<div>
-        @Html.ActionLink("Back to List", "Index")
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+@*<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.EventTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+
+            @Html.EditorFor(model => model.EventTitle, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EventTitle, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.EventDate, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.EventDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.EventDesc, new { @class = "form-control", @cols = 80, @rows = 10 })
+            @Html.ValidationMessageFor(model => model.EventDesc, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.eventType, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EnumDropDownListFor(model => model.eventType, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.eventType, "", new { @class = "text-danger" })
+        </div>
     </div>*@
+
+@*<div class="form-group">
+        @Html.LabelFor(model => model.ClubID, "ClubID", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownList("ClubID", null, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ClubID, "", new { @class = "text-danger" })
+        </div>
+    </div>*@
+
+

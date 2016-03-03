@@ -9,6 +9,12 @@ using ultimateorganiser.Models;
 using ultimateorganiser.ViewModels;
 using System.Data;
 
+//Google Maps API
+using Geocoding;
+using Geocoding.Google;
+using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
+
 namespace ultimateorganiser.Controllers
 {
     [RequireHttps]
@@ -18,25 +24,102 @@ namespace ultimateorganiser.Controllers
         ClubViewModels cvm = new ClubViewModels();
         MemberViewModels mvm = new MemberViewModels();
 
+        //Google Maps
+        private IGeocoder geocoder;
+ 
+
         //Home Page - displays a list of clubs
         public ActionResult Index()
         {
+            string currentUserId = User.Identity.GetUserId();
+            //ApplicationUser currentUser = db.First(x => x.Id == currentUserId);
+
             cvm.Clubs = db.Clubs.ToList();
-            cvm.NumberofClubs = cvm.Clubs.Count();
+
+            //Member Count
             cvm.MemberCount = 0;
             cvm.Clubs.ForEach(clb => cvm.MemberCount += clb.ClubMembers.Count());
+
+            //Event Count
+            cvm.EventCount = 0;
+            cvm.Clubs.ForEach(clb => cvm.EventCount += clb.ClubEvents.Count());
+
             ViewBag.title = "Clubs List (" + cvm.NumberofClubs + ")";
+
 
             return View(cvm.Clubs);
         }
 
-        //Create Club Partial View Popup using jQuery UI Dialog - *NEEDS TO BE LOOKED OVER AND TESTED*
+        //Details Page - Displays the details of a selected club
+        [HttpGet]
+        public ActionResult Details(int? id)
+        {
+            var selClub = db.Clubs.Find(id);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ViewBag.Message = "Details Page of Club " + selClub.ClubName;
+
+            //Delete Old Events
+            foreach (var Event in selClub.ClubEvents.ToList())
+            {
+                //If Event date is older than one day remove this event
+                if ((Event.EventDate - DateTime.Now).TotalDays < 1)
+                {
+                    db.ClubEvents.Remove(Event);
+                    db.SaveChanges();
+                }
+            }
+
+            // db.SaveChanges();
+            return View(selClub);
+        }
+
+        [HttpGet]
+        public ActionResult EventDetails(int? id)
+        {
+            //Get Selected Event details
+            var selEvent = db.ClubEvents.Find(id);
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }            
+
+            //Event Information
+            ViewBag.EventTitle = selEvent.EventTitle;
+            ViewBag.EventDesc = selEvent.EventDesc;
+            ViewBag.Location = selEvent.EventLocation;
+            ViewBag.EventDate = selEvent.EventDate;
+
+            //No location in event
+            if (selEvent.EventLocation == null)
+            {
+                return View("EventDetails");
+            }
+
+            //Get longitude and latitude using Geocoder
+            else
+            {
+                geocoder = new GoogleGeocoder();
+
+                var location = geocoder.Geocode(selEvent.EventLocation).ToList();
+
+                var f = location.First();
+
+                ViewBag.Long = Convert.ToDouble(f.Coordinates.Longitude);
+                ViewBag.Lat = Convert.ToDouble(f.Coordinates.Latitude);
+                return View("EventDetails");
+            }
+        }
+
+        //Create Club Partial View Popup using jQuery UI Dialog
         [HttpGet]
         public ActionResult CreateClubPartialView()
         {
             return PartialView();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -52,135 +135,115 @@ namespace ultimateorganiser.Controllers
             return View(club);
         }
 
-       
-        //Add Events to current club
+        //Create a new Event for the current club - Date and time picker has to be added and set it to min date
         [HttpGet]
-        public ActionResult CreateEvent(int id)   //*Edit and delete functions for events*
+        public ActionResult CreateEvent(int id)
+        {
+            var selClub = db.Clubs.Find(id);
+
+            if (selClub == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.SelClubName = selClub.ClubName;
+            ViewBag.SelClubId = selClub.ClubID;
+            ViewBag.Date = DateTime.Today;
+
+
+            ClubEvent newEvent = new ClubEvent() { ClubID = selClub.ClubID };
+            return View(newEvent);
+        }
+
+        [HttpPost]
+        public ActionResult CreateEvent(ClubEvent newEvent)
+        {
+            if (ModelState.IsValid)
+            {
+                //Get data entered by user on CreateEvent View
+                newEvent.EventTitle =newEvent.EventTitle;
+                newEvent.EventDesc = newEvent.EventDesc;
+                newEvent.EventDate = Convert.ToDateTime(newEvent.EventDate);
+                newEvent.eventType = newEvent.eventType;
+                newEvent.eventPriority = newEvent.eventPriority;
+                newEvent.EventLocation = newEvent.EventLocation;
+                newEvent.ClubID = newEvent.ClubID;
+
+                //Get the new id for this event
+                var NextId = this.db.ClubEvents.Max(t => t.EventID);
+                var newId = NextId + 1;
+                newEvent.EventID = newId;
+
+                //Save changes to database
+                db.ClubEvents.Add(newEvent);
+                db.SaveChanges();
+
+                //Go back to Details page for the current club
+                return RedirectToAction("Details", new
+                {
+                    id = newEvent.ClubID
+                });
+            }
+            return RedirectToAction("Index");
+        }
+
+        //Add Member - Allows user to add new members to a selected club
+        [HttpGet]
+        public ActionResult AddMembers(int id)
         {
             var SelClub = db.Clubs.Find(id);
 
-            //If no club is found handle it
             if (SelClub == null)
             {
                 return HttpNotFound();
             }
 
-            ViewBag.ClubName = SelClub.ClubName;
-            ViewBag.ClubID = SelClub.ClubID;
+            var nm = new AddMembersToClub { ClubID = id, ClubName = SelClub.ClubName };
 
-            return View();
-        }
-
-        //This is the Controller for creating the event
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateEvent([Bind(Include = "EventTitle,EventDate,EventDesc,eventType,ClubID")] ClubEvent newEvent)
-        {
-
-            if (ModelState.IsValid)
+            //Get All the members who are not a part of the currentely selected club
+            var MemList = (from r in db.ClubMembers.
+                          Where(r => r.ClubID != SelClub.ClubID)
+                           select r).ToList();
+            //Put these selected members into a list
+            var memberList = MemList.Select(m => new
             {
-                db.ClubEvents.Add(newEvent);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(newEvent);
-        }
+                MemberUserName = m.UserName,
+                MemberIds = m.UserId
+            }).ToList();
 
 
-        //Add Members - Displays a page with a list of all members and a list of current members
-        public ActionResult AddMembers(int id)
-        {
-            var Selclub = db.Clubs.Find(id);
-         
-            //if no club is found handle it   
-            if (Selclub == null)
-            {
-                return HttpNotFound();
-            }
+            nm.Members = new MultiSelectList(memberList, "MemberIds", "MemberUserName");
 
-            var cm = new AddMembersToClub { ClubId = id, ClubName = Selclub.ClubName };
+            ViewBag.SelClubID = SelClub.ClubID;
 
-            cm.Members = db.ClubMembers.Select(m => new SelectListItem
-                        {
-                            Value = m.ClubID.ToString(),
-                            Text = m.UserName
-                        }).ToList();         
-
-            return View(cm);
+            return View(nm);
         }
 
         [HttpPost]
-        public ActionResult AddMembers(NewMemberList model)
+        public ActionResult AddMembers(AddMembersToClub model)
         {
-            foreach (var item in model.SelectedIDs)
+            foreach (var MemberUserId in model.MemberIds)
             {
-                var newMember = db.ClubMembers.FirstOrDefault(nm => nm.UserId == item);
+                ClubMember MemberSelected = db.ClubMembers.Find(MemberUserId);
 
-                //If no members is passed back handle error
-                if (newMember == null)
+                if (MemberSelected == null)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
 
-                if (newMember != null)
+                if (MemberSelected != null)
                 {
-                    //db.Entry(club).State = EntityState.Modified;
-                    //db.SaveChanges();
-                    //return RedirectToAction("Index");
+                    Club ClubSelected = db.Clubs.Find(model.ClubID);
+
+                    ClubSelected.ClubMembers.Add(MemberSelected);
                 }
-                db.SaveChanges();
             }
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
-
-        //Create - Allows the user to create a Club
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Clubs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ClubID,ClubName,ClubDescription")] Club club)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Clubs.Add(club);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(club);
-        }
-
-        //Event Page - displays a list of events for the club the user selects via a dropdown list
-        public ActionResult Event()
-        {
-            var clubs = db.Clubs.Select(r => new SelectListItem
-            {
-                Value = r.ClubID.ToString(),
-                Text = r.ClubName
-            }).ToList();
-            ViewBag.Clubs = clubs;
-            return View();
-        }
-
-
-        public PartialViewResult EventPartialView(int id)
-        {
-            var data = db.Clubs.Where(r => r.ClubID == id)
-                                                          .OrderByDescending(r => r.ClubEvents);
-            return PartialView(data);
-        }
-
-
-
-
+        //Edit Club
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -213,39 +276,116 @@ namespace ultimateorganiser.Controllers
             return View(club);
         }
 
-
-
-        //Details Page - Displays the details of a selected club
-        public ActionResult Details(int? id)
+        //Edit Event
+        [HttpGet]
+        public ActionResult EditEvent(int? id)
         {
-            var selClub = db.Clubs.Find(id);
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewBag.Message = "Details Page of Club " + selClub.ClubName;
+            ClubEvent selEvent = db.ClubEvents.Find(id);
+            if (selEvent == null)
+            {
+                return HttpNotFound();
+            }
 
-                    // db.SaveChanges();
-                    return View(selClub);
+            ViewBag.SelClubID = selEvent.ClubID;
+
+            ViewBag.Title = selEvent.EventTitle;
+
+            return View(selEvent);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditEvent([Bind(Include = "EventID,EventTitle,EventDate,EventLocation,EventDesc,eventType")] ClubEvent editCEvent)
+        {  
+
+            ClubEvent SelEvent = db.ClubEvents.Find(editCEvent.EventID);
+
+            int selectedID = SelEvent.ClubID;
+
+            editCEvent.ClubID = selectedID;
+
+            //Remove Old Event
+            ClubEvent OldEvent = db.ClubEvents.Find(editCEvent.EventID);
+            db.ClubEvents.Remove(OldEvent);
+             
+
+            //Save changes to database
+            db.ClubEvents.Add(editCEvent);
+            db.SaveChanges();
+
+            //Go back to Details page for the current club
+            return RedirectToAction("Details", new
+            {
+                id = editCEvent.ClubID
+            });
+
+            //if (ModelState.IsValid)
+            //{
+            //    db.Entry(editCEvent).State = EntityState.Modified;
+            //    db.SaveChanges();
+            //    return RedirectToAction("Details", new
+            //    {
+            //        id = editCEvent.ClubID
+            //    });
+            //}
+            //return View(editCEvent);
+        }
+
+
         //Delete Method- Deletes a selected club - works with confirm dialog
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             Club club = db.Clubs.Find(id);
             db.Clubs.Remove(club);
             db.SaveChanges();
-            return RedirectToAction("Index");            
-
+            return RedirectToAction("Index");
         }
 
-        public ActionResult Members()
+        //Delete Event Method- Deletes a selected event - works with confirm dialog
+        //[HttpPost]
+        public ActionResult DeleteEvent(int id)
         {
 
-            mvm.Members = db.ClubMembers.ToList();
-            ViewBag.title = "Members List";
-            return View(db.ClubMembers.ToList());
+            ClubEvent SelEevent = db.ClubEvents.Find(id);
+            db.ClubEvents.Remove(SelEevent);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", new
+            {
+                id = SelEevent.ClubID
+            });
+
         }
+
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> EventNotification(EventViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = await Microsoft.AspNet.Identity.UserManager.FindByID(model.MemberId);
+        //        if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.MemberId)))
+        //        {
+        //            // Don't reveal that the user does not exist or is not confirmed
+        //            return View("HomeController");
+        //        }
+
+        //        string code = await UserManager.GeneratePasswordResetTokenAsync(user.MemberId);
+        //        var callbackUrl = Url.Action("CreateEvent", "Home", new { userId = user.Id, code = code,  }, protocol: Request.Url.Scheme);
+        //        await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+        //        return RedirectToAction("ForgotPasswordConfirmation", "Account");
+        //    }
+
+        //    // If we got this far, something failed, redisplay form
+        //    return View(model);
+        //}
+
 
         public ActionResult About()
         {
@@ -261,210 +401,47 @@ namespace ultimateorganiser.Controllers
 //Old code / Commented out code
 
 
-//public ActionResult Index(ClubEvent)
+
+
+////Create - Allows the user to create a Club
+//public ActionResult Create()
 //{
-//    return PartialView();
+//    return View();
 //}
 
-////Add Event
+//// POST: Clubs/Create
+//// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+//// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 //[HttpPost]
-//public ActionResult Index(ClubEvent Event)
+//[ValidateAntiForgeryToken]
+//public ActionResult Create([Bind(Include = "ClubID,ClubName,ClubDescription")] Club club)
 //{
 //    if (ModelState.IsValid)
 //    {
-//        using (var db = new UltimateDb())
-//        {
-//            var newEvent = new ClubEvent();
-//            newEvent.EventTitle = Event.EventTitle;
-//            newEvent.EventDesc = Event.EventDesc;
-//            newEvent.eventType = Event.eventType;
-
-
-//            db.ClubEvents.Add(newEvent);
-//            db.SaveChanges();
-//        }
+//        db.Clubs.Add(club);
+//        db.SaveChanges();
+//        return RedirectToAction("Index");
 //    }
 
-//    return PartialView();
+//    return View(club);
 //}
 
-
-
-
-//Add Event
-//public ActionResult CreateEvent()
-//{
-//    var vm = new EventViewModel();
-//    {
-//        vm.Members = db.ClubMembers.Select(s => new SelectListItem
-//        {
-//            Value = s.UserImage.ToString(),
-//            Text = s.UserEmail
-//        }).ToList();
-//    }
-//    return View( new EventViewModel());
-//}
-
-//Add Event
-//[HttpPost]
-//public ActionResult CreateEvent(EventViewModel model)
-//{
-//    if(ModelState.IsValid)
-//    {
-//        using (var db = new UltimateDb())
-//        {
-//            var newEvent = new ClubEvent();
-//            newEvent.EventTitle = model.EventTitle;
-//            newEvent.EventDesc = model.EventDescription;
-
-//            db.ClubEvents.Add(newEvent);
-//            db.SaveChanges();
-//        }
-//    }
-
-//    return View();
-//}
-
-
-//Event Page
-//[HttpGet]
+////Event Page - displays a list of events for the club the user selects via a dropdown list
 //public ActionResult Event()
 //{
-//    var clubs = new SelectList(
-//      db.Clubs.Select(r => r.ClubName).Distinct().ToList());
-
-//    ViewBag.Clubs = clubs;
-//    return View();
-//}
-
-//Event Page
-//[HttpGet]
-//public ActionResult Event()
-//{
-//    var clubs = new SelectList(
-//      db.Clubs.Select(r => r.ClubName).Distinct().ToList());
-
+//    var clubs = db.Clubs.Select(r => new SelectListItem
+//    {
+//        Value = r.ClubID.ToString(),
+//        Text = r.ClubName
+//    }).ToList();
 //    ViewBag.Clubs = clubs;
 //    return View();
 //}
 
 
-
-////Edit Club (error)
-//public ActionResult Edit(int? id)
+//public PartialViewResult EventPartialView(int id)
 //{
-//    if (id == null)
-//    {
-//        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-//    }
-//    Club club = db.Clubs.Find(id);
-//    if (club == null)
-//    {
-//        return HttpNotFound();
-//    }
-//    return View(club);
-//}
-
-////Edit Club
-//[HttpPost]
-//[ValidateAntiForgeryToken]
-//public ActionResult Edit([Bind()] Club club)
-//{
-//    if (ModelState.IsValid)
-//    {
-//        db.Entry(club).State = EntityState.Modified;
-//        db.SaveChanges();
-//        return RedirectToAction("Index");
-//    }
-//    return View(club);
-//}
-
-
-
-//Edit Club Partial View - Allows the user to edit a selected clubs information
-//*Allow the club admin to remove and add members of the club*
-//[HttpGet]
-//public ActionResult EditClubPartialView(int? id)
-//{
-//    if (id == null)
-//    {
-//        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-//    }
-//    Club club = db.Clubs.Find(id);
-//    if (club == null)
-//    {
-//        return HttpNotFound();
-//    }
-//    return PartialView(club);
-//}
-
-//[HttpPost]
-//[ValidateAntiForgeryToken]
-//public ActionResult EditClubPartialView([Bind()] Club club)
-//{
-//    if (ModelState.IsValid)
-//    {
-//        db.Entry(club).State = EntityState.Modified;
-//        db.SaveChanges();
-//        return RedirectToAction("Index");
-//    }
-//    return View(club);
-//}
-
-//Add Members - Displays a page with a list of all members and a list of current members
-//[HttpGet]
-//public ActionResult AddMembers(int? id)
-//{
-//    //****Remove Members that are already in the Team from the list****
-
-//    //ClubMember oCustomer = new ClubMember()
-
-//    if (id == null)
-//    {
-//        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-//    }
-
-//    Club club = db.Clubs.Find(id);
-
-//    if (club == null)
-//    {
-//        return HttpNotFound();
-//    }
-
-//    List<ClubMember> CurrentMembers = club.ClubMembers;
-
-//    List<ClubMember> MembersList = new List<ClubMember>();
-//    MembersList = db.ClubMembers.ToList();
-
-//    ViewBag.CurrentMembersList = CurrentMembers;
-//    return View(new NewMemberList() { NewMembers = MembersList });
-//}
-
-//[HttpPost]
-//[ValidateAntiForgeryToken]
-//public ActionResult AddMembers([Bind(Include = "SelectedIDs")] Club club)
-//{
-//    if (ModelState.IsValid)
-//    {
-//        db.Entry(club).State = EntityState.Modified;
-//        db.SaveChanges();
-//        return RedirectToAction("Index");
-//    }
-//    return View(club);
-//}
-
-
-//[HttpPost]
-//[ValidateAntiForgeryToken]
-//public ActionResult CreateEvent([Bind(Include = "EventTitle,EventDate,EventDesc,EventType,ClubID")] ClubEvent newEvent)
-//{
-//    //ModelState.Remove("EventID");
-
-//    if (ModelState.IsValid)
-//    {
-//        db.ClubEvents.Add(newEvent);
-//        db.SaveChanges();
-//        return RedirectToAction("Details");
-//}
-//    return View();
+//    var data = db.Clubs.Where(r => r.ClubID == id)
+//                                                  .OrderByDescending(r => r.ClubEvents);
+//    return PartialView(data);
 //}

@@ -14,9 +14,9 @@ namespace ultimateorganiser.Models
             var initClubs = new List<Club>
             {
                 //Chelsea
-                new Club() { ClubName = "Chelsea" ,ClubDescription = "London Football Club", ClubEvents = new List<ClubEvent> {
-                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), eventType = EventType.Training },
-                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), eventType = EventType.Game }
+                new Club() { ClubName = "Chelsea" ,ClubDescription = "London Football Club" ,ClubEvents = new List<ClubEvent> {
+                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), EventLocation = "Sligo" ,eventType = EventType.Training , eventPriority = EventPriority.Low},
+                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2015"), EventLocation = "Sligo" , eventType = EventType.Game, eventPriority = EventPriority.Medium }
                 },
                     ClubMembers = new List<ClubMember> {
                     new ClubMember { UserFName = "Eden", UserLName = "Hazard" , UserEmail = "Hazard@Chelsea.com" , UserDescription = "Footballer" , UserName = "ChelseaHazzard", UserDoB = DateTime.Parse("07/05/1994")},
@@ -25,8 +25,8 @@ namespace ultimateorganiser.Models
 
                 //Manchester United
                 new Club() { ClubName = "Machester" , ClubDescription = "Manchester Football Club", ClubEvents = new List<ClubEvent> {
-                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), eventType = EventType.Training },
-                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), eventType = EventType.Game }
+                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), EventLocation = "Sligo" , eventType = EventType.Training, eventPriority = EventPriority.Low },
+                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), EventLocation = "Sligo" , eventType = EventType.Game, eventPriority = EventPriority.High }
                 },
                     ClubMembers = new List<ClubMember> {
                     new ClubMember { UserFName = "Wayne", UserLName = "Rooney" , UserEmail = "Rooney@Arsenal.com" , UserDescription = "Footballer from England" , UserName = "ManchesterRooney", UserDoB = DateTime.Parse("07/05/1994")},
@@ -35,8 +35,8 @@ namespace ultimateorganiser.Models
 
                 //Celtic
                 new Club() { ClubName = "Celtic", ClubDescription = "Scottish Football Club", ClubEvents = new List<ClubEvent> {
-                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), eventType = EventType.Training },
-                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), eventType = EventType.Game }
+                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), EventLocation = "Sligo" , eventType = EventType.Training, eventPriority = EventPriority.Medium },
+                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), EventLocation = "Sligo" , eventType = EventType.Game, eventPriority = EventPriority.None }
                 },
                     ClubMembers = new List<ClubMember>() {
                     new ClubMember {UserFName = "Henrick", UserLName = "Larson", UserEmail = "Lason@Celtic.com", UserDescription = "Swedish Footballer", UserName = "CelticLarson", UserDoB = DateTime.Parse("07/05/94")},
@@ -46,8 +46,8 @@ namespace ultimateorganiser.Models
 
                 //Arsenal
                 new Club() { ClubName = "Arsenal", ClubDescription = "London Football Club", ClubEvents = new List<ClubEvent> {
-                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), eventType = EventType.Training },
-                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), eventType = EventType.Game }
+                    new ClubEvent { EventTitle = "Training on pitch", EventDesc = "light training before game on sunday, bring water", EventDate = DateTime.Parse("08/03/2016"), EventLocation = "Sligo" , eventType = EventType.Training, eventPriority = EventPriority.High },
+                    new ClubEvent { EventTitle = "Home Game", EventDesc = "Semi Final", EventDate = DateTime.Parse("11/03/2016"), EventLocation = "Sligo" , eventType = EventType.Game, eventPriority = EventPriority.Low }
                 },
                     ClubMembers = new List<ClubMember>() {
                     new ClubMember { UserFName = "Mesut", UserLName = "Ozil" , UserEmail = "Ozil@Arsenal.com" , UserDescription = "Footballer from Germany" , UserName = "ArsenalOzil", UserDoB = DateTime.Parse("07/05/1994")},
@@ -58,6 +58,9 @@ namespace ultimateorganiser.Models
             };
 
             initClubs.ForEach(c => context.Clubs.Add(c));   // Add each Club to the dataabse
+
+            
+
             context.SaveChanges();  // save changes to the database
         }
 

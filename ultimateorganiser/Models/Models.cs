@@ -17,7 +17,15 @@ namespace ultimateorganiser.Models
         public DbSet<Club> Clubs { get; set; }
         public DbSet<ClubEvent> ClubEvents { get; set; }
         public DbSet<ClubMember> ClubMembers { get; set; }
+        public object Users { get; internal set; }
     }
+
+    //Enums
+   // public enum ClubType { Archery, Athletics, Basketball, Boxing, Camogie, Cricket, Cycling, Darts, Gaelic, Golf, Handball, Hocky, Hurling, Karate, MMA, Pool, Rugby, Snooker, Snowsports, Soccer, Surfing, Swimming, Tennis, Vollyball, Windsurfing, Youth, Other }
+
+    public enum EventType { Meeting, Game, Training, Social, Other }
+
+    public enum EventPriority { Low, Medium, High, None }
 
     public class Club
     {
@@ -32,25 +40,21 @@ namespace ultimateorganiser.Models
         [Display(Name = "Club Name")]
         public string ClubName { get; set; }
 
+
         //Discription
         [Display(Name = "Description")]
         [StringLength(200, ErrorMessage = "Discription is too long")] //character remaining count
         public string ClubDescription { get; set; }
 
-        //Club Type
-        public enum ClubType { Archery, Athletics, Basketball, Boxing, Camogie, Cricket, Cycling, Darts, Gaelic, Golf, Handball, Hocky, Hurling, Karate, MMA, Pool, Rugby, Snooker, Snowsports, Soccer, Surfing, Swimming, Tennis, Vollyball, Windsurfing, Youth, Other }
-
+       
         //List of Members that are members of this Club
         public virtual List<ClubMember> ClubMembers { get; set; }
 
         //List of Events for this Club
         public virtual List<ClubEvent> ClubEvents { get; set; } //List of Events for this Club
 
-        public String ClubImage { get; set; }
-
     }//end Club
-
-    public enum EventType { Meeting, Game, Training, Social, Other }
+        
 
     public class ClubEvent
     {
@@ -63,7 +67,7 @@ namespace ultimateorganiser.Models
         public string EventTitle { get; set; }
 
         //Event Date
-       // [Required(ErrorMessage = "You must put a date on this event")]
+        [Required(ErrorMessage = "You must put a date on this event")]
         [DataType(DataType.DateTime)]
         [Display(Name = "Date")]
         public DateTime EventDate { get; set; }
@@ -73,13 +77,26 @@ namespace ultimateorganiser.Models
         [DataType(DataType.Text)]
         public string EventDesc { get; set; }
 
+        //Event Location
+        [Required(ErrorMessage = "You must enter a location for this event")]
+        [DataType(DataType.Text)]
+        [Display(Name = "Location")]
+        public string EventLocation { get; set; }
+
         //Event Type
         [Required]
         [Display(Name = "Event Type")]
         public EventType eventType { get; set; }
 
+        //Event Priority
+        [Required]
+        [Display(Name = "Priority")]
+        public EventPriority eventPriority { get; set; }
+
+
+
         //Event Members
-        public virtual List<ClubMember> EventMembers { get; set; }
+        //public virtual List<ClubMember> EventMembers { get; set; }
 
         //Foreign Key for Club
         public int ClubID { get; set; }

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ultimateorganiser.Models.ClubEvent>
+
+@{int EventRowNo = 0;}
+
+<div>
+    <h4>Upcomming Events</h4>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Events</h3>
+                    <div class="pull-right">
+                        <span class="clickable filter" data-toggle="tooltip" title="Filter events" data-container="body">
+                            <i class="glyphicon glyphicon-filter"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Events" />
+                </div>
+                <table class="table table-hover" id="dev-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+
+
+
+                    @*@foreach (var item in )
+                    {
+                        <tbody>
+                            <tr>
+                                <td>@(EventRowNo += 1)</td>
+                                <td>@Html.DisplayFor(modelItem => item.EventTitle)</td>
+                                <td>@Html.DisplayFor(modelItem => item.eventType)</td>
+                                <td>@Html.DisplayFor(modelItem => item.EventDate)</td>
+                                <td>@Html.DisplayFor(modelItem => item.EventDesc)</td>
+                            </tr>
+                        </tbody>
+                    }*@
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

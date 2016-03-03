@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Geocoding, Version=3.3.0.0, Culture=neutral, PublicKeyToken=7c714700b88674c7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Geocoding.net.3.3.0\lib\net40\Geocoding.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -51,6 +55,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.2\lib\net452\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SendGrid, Version=6.3.0.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
@@ -122,6 +130,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="Twilio.Api, Version=3.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Twilio.4.5.0\lib\3.5\Twilio.Api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -191,6 +203,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201602271153151_InitialCreate.cs" />
+    <Compile Include="Migrations\201602271153151_InitialCreate.Designer.cs">
+      <DependentUpon>201602271153151_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201602271202550_FullName.cs" />
+    <Compile Include="Migrations\201602271202550_FullName.Designer.cs">
+      <DependentUpon>201602271202550_FullName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Models.cs" />
     <Compile Include="Models\ClubInitaliser.cs" />
@@ -396,7 +417,6 @@
     <Content Include="Views\Home\Delete.cshtml" />
     <Content Include="Views\ModalMode.cshtml" />
     <Content Include="Views\TestPartialView.cshtml" />
-    <Content Include="Views\Home\Event.cshtml" />
     <Content Include="Views\Home\EditClubPartialView.cshtml" />
     <Content Include="Views\Clubs\Create.cshtml" />
     <Content Include="Views\Clubs\Delete.cshtml" />
@@ -407,6 +427,10 @@
     <Content Include="Views\Shared\ClubTablePartialView.cshtml" />
     <Content Include="Views\Home\AddMembers.cshtml" />
     <Content Include="Views\Home\CreateEvent.cshtml" />
+    <Content Include="Views\Shared\EventDetailsPartialView.cshtml" />
+    <Content Include="Views\Home\EditEvent.cshtml" />
+    <Content Include="Views\Home\GoogleMapsPartialView.cshtml" />
+    <Content Include="Views\Home\EventDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -419,6 +443,14 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201602271153151_InitialCreate.resx">
+      <DependentUpon>201602271153151_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201602271202550_FullName.resx">
+      <DependentUpon>201602271202550_FullName.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

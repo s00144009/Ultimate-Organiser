@@ -93,18 +93,25 @@
         <span class="sr-only">Next</span>
     </a>
 </div>
- 
+
 
 @*@using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "DELETE", InsertionMode = InsertionMode.Replace, UpdateTargetId = "ClubDiv" }))
-{*@
-    @*Club Table Partial View*@
-    <div id="ClubDiv" class="container">
-        @Html.Partial("ClubTablePartialView", Model.ToList())
-    </div>
-@*}*@
+    {*@
+<div>
+    <p>
+        @*Create Club button*@
+        <button id="createClub-opener" class="btn-success btn-xs"> Create Club Test</button> 
+    </p>
+</div>
+
+@*Club Table Partial View*@
+<div id="ClubDiv" class="container">
+    @Html.Partial("ClubTablePartialView", Model.ToList())
+</div>
 
 
- @*Create Club Popup*@
+
+@*Create Club Popup*@
 <div id="CreateClub-dialog" title="Create Club">
     @Html.Action("CreateClubPartialView", new ultimateorganiser.Models.Club())
 </div>
